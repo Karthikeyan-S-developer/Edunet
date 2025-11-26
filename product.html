@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Simple Product Page</title>
+    <style>
+        :root {
+            --bg: #f7f8fb;
+            --card: #ffffff;
+            --accent: #2563eb;
+            --muted: #6b7280;
+        }
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: var(--bg);
+            color: #111827;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        header {
+            background: white;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+        }
+        .brand { font-weight: 700; color: var(--accent); }
+        .controls { display: flex; gap: .5rem; align-items: center; }
+        .search {
+            padding: .5rem .75rem;
+            border-radius: 8px;
+            border: 1px solid #e6e9ef;
+            background: #fff;
+        }
+        .cart {
+            display: inline-flex;
+            gap: .5rem;
+            align-items: center;
+            background: var(--accent);
+            color: white;
+            padding: .5rem .75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+        main {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(16,24,40,0.04);
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+        }
+        .thumb {
+            width: 100%;
+            height: 140px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: #f3f4f6;
+        }
+        .title {
+            font-weight: 600;
+            margin-top: .25rem;
+        }
+        .price {
+            color: var(--accent);
+            font-weight: 700;
+        }
+        .meta { color: var(--muted); font-size: .9rem; }
+        .actions {
+            margin-top: auto;
+            display: flex;
+            gap: .5rem;
+        }
+        .btn {
+            padding: .5rem .6rem;
+            border-radius: 8px;
+            border: 1px solid #e6e9ef;
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            flex: 1;
+        }
+        .btn.primary {
+            background: var(--accent);
+            color: white;
+            border: none;
+        }
+        .badge {
+            background: #ef4444;
+            color: white;
+            padding: .15rem .5rem;
+            border-radius: 999px;
+            font-size: .8rem;
+        }
+        footer {
+            text-align: center;
+            color: var(--muted);
+            padding: 2rem 0;
+            font-size: .9rem;
+        }
+        @media (max-width:420px) {
+            header { flex-direction: column; align-items: stretch; gap: .75rem; }
+            .controls { justify-content: space-between; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand">SimpleStore</div>
+        <div class="controls">
+            <input id="search" class="search" placeholder="Search products..." />
+            <button id="cartBtn" class="cart" aria-label="View cart">
+                Cart <span id="cartCount" style="margin-left:.5rem;background:#fff;color:var(--accent);padding:.15rem .5rem;border-radius:999px;font-weight:700">0</span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section>
+            <h2 style="margin:0 0 1rem 0">Products</h2>
+            <div id="products" class="grid">
+                <article class="card" data-name="Wireless Headphones" data-price="59.99">
+                    <img class="thumb" src="https://via.placeholder.com/400x300?text=Headphones" alt="Wireless Headphones">
+                    <div class="title">Wireless Headphones</div>
+                    <div class="meta">Comfortable, 20h battery</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div class="price">$59.99</div>
+                        <div class="badge">New</div>
+                    </div>
+                    <div class="actions">
+                        <button class="btn" data-action="details">Details</button>
+                        <button class="btn primary" data-action="add">Add to cart</button>
+                    </div>
+                </article>
+
+                <article class="card" data-name="Classic Backpack" data-price="39.50">
+                    <img class="thumb" src="https://via.placeholder.com/400x300?text=Backpack" alt="Classic Backpack">
+                    <div class="title">Classic Backpack</div>
+                    <div class="meta">Durable canvas, 20L</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div class="price">$39.50</div>
+                        <div class="meta" style="font-size:.85rem">In stock</div>
+                    </div>
+                    <div class="actions">
+                        <button class="btn" data-action="details">Details</button>
+                        <button class="btn primary" data-action="add">Add to cart</button>
+                    </div>
+                </article>
+
+                <article class="card" data-name="Smart Watch" data-price="129.00">
+                    <img class="thumb" src="https://via.placeholder.com/400x300?text=Smart+Watch" alt="Smart Watch">
+                    <div class="title">Smart Watch</div>
+                    <div class="meta">Heart-rate + notifications</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div class="price">$129.00</div>
+                        <div class="meta" style="font-size:.85rem">Limited</div>
+                    </div>
+                    <div class="actions">
+                        <button class="btn" data-action="details">Details</button>
+                        <button class="btn primary" data-action="add">Add to cart</button>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        Built for demo — simple product grid with cart counter.
+    </footer>
+
+    <script>
+        (function () {
+            const cartCountEl = document.getElementById('cartCount');
+            const cartBtn = document.getElementById('cartBtn');
+            const productsEl = document.getElementById('products');
+            const searchEl = document.getElementById('search');
+
+            let cartCount = 0;
+            function updateCartCount() {
+                cartCountEl.textContent = cartCount;
+            }
+
+            // Handle add to cart and details
+            productsEl.addEventListener('click', (e) => {
+                const actionBtn = e.target.closest('[data-action]');
+                if (!actionBtn) return;
+                const card = actionBtn.closest('.card');
+                const name = card.dataset.name;
+                const price = parseFloat(card.dataset.price);
+
+                if (actionBtn.dataset.action === 'add') {
+                    cartCount += 1;
+                    updateCartCount();
+                    // tiny feedback
+                    actionBtn.textContent = 'Added';
+                    actionBtn.disabled = true;
+                    setTimeout(() => {
+                        actionBtn.textContent = 'Add to cart';
+                        actionBtn.disabled = false;
+                    }, 900);
+                } else if (actionBtn.dataset.action === 'details') {
+                    alert(name + " — $" + price.toFixed(2));
+                }
+            });
+
+            // Cart button shows a quick summary
+            cartBtn.addEventListener('click', () => {
+                alert('Cart contains ' + cartCount + ' item(s).');
+            });
+
+            // Simple search/filter
+            searchEl.addEventListener('input', () => {
+                const q = searchEl.value.trim().toLowerCase();
+                const cards = productsEl.querySelectorAll('.card');
+                cards.forEach(card => {
+                    const name = card.dataset.name.toLowerCase();
+                    const meta = (card.querySelector('.meta')?.textContent || '').toLowerCase();
+                    const visible = !q || name.includes(q) || meta.includes(q);
+                    card.style.display = visible ? '' : 'none';
+                });
+            });
+
+            // initial
+            updateCartCount();
+        })();
+    </script>
+</body>
+</html>
