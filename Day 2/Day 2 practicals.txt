@@ -1,0 +1,17 @@
+create GitHub acc
+install git
+check it
+----------------------------------------------------------------
+Create Repo and perform a commit and track the commit
+Adding files to the repo
+clone a repo
+------------------------------------
+VS Code link vs code to GitHub
+create a repo ,commit and track changes 
+
+------------------------------
+hosting a website
+------------------------------
+create branches and merge it
+GitHub collaboration
+-------------------------------

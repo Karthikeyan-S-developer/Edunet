@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Neon Anime — Awesome Anime Showcase</title>
+<meta name="description" content="A fluorescent, animated anime showcase page with neon effects and interactive cards." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
+
+<style>
+  /* -------------------------
+     Base / Reset
+     ------------------------- */
+  :root{
+    --bg-1: #06030a;
+    --bg-2: #0b0b14;
+    --glass: rgba(255,255,255,0.04);
+    --accent-1: #00f5ff; /* cyan */
+    --accent-2: #9d00ff; /* violet */
+    --accent-3: #ff2d95; /* pink */
+    --neon-text: linear-gradient(90deg,var(--accent-1),var(--accent-2),var(--accent-3));
+    --card-glow: 0 8px 30px rgba(157,0,255,0.12), 0 2px 8px rgba(0,245,255,0.04);
+    --glass-border: rgba(255,255,255,0.06);
+    --glass-accent: rgba(157,0,255,0.06);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background: linear-gradient(180deg,var(--bg-1),var(--bg-2));
+    color:#e9eef8;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    overflow-x:hidden;
+  }
+
+  /* -------------------------
+     Layout
+     ------------------------- */
+  .wrap{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:32px;
+    gap:28px;
+  }
+
+  /* Canvas particles behind everything */
+  #particle-canvas{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    mix-blend-mode:screen;
+    opacity:0.8;
+  }
+
+  header{
+    position:relative;
+    z-index:5;
+    width:100%;
+    max-width:1200px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+
+  .logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    user-select:none;
+  }
+  .logo .badge{
+    width:48px;height:48px;border-radius:12px;
+    background:conic-gradient(from 180deg at 50% 50%,var(--accent-1),var(--accent-2),var(--accent-3));
+    display:grid;place-items:center;
+    box-shadow: 0 6px 24px rgba(157,0,255,0.18);
+    transform:rotate(-10deg);
+  }
+  .logo h1{
+    margin:0;font-size:18px;letter-spacing:0.6px;
+    background:var(--neon-text);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow: 0 6px 30px rgba(157,0,255,0.12);
+  }
+  nav{
+    display:flex;gap:12px;align-items:center;
+  }
+  .nav-btn{
+    border:1px solid var(--glass-border);
+    padding:8px 12px;border-radius:10px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    backdrop-filter: blur(6px);
+    color:inherit;
+    cursor:pointer;
+    font-weight:600;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .nav-btn:focus-visible{outline:2px solid rgba(0,245,255,0.18);outline-offset:2px}
+  .nav-btn:active{transform:translateY(1px)}
+  .nav-btn.primary{
+    border: 1px solid rgba(0,245,255,0.14);
+    box-shadow: 0 6px 28px rgba(0,245,255,0.06);
+  }
+
+  /* -------------------------
+     Hero
+     ------------------------- */
+  .hero{
+    position:relative;
+    z-index:2;
+    width:100%;
+    max-width:1200px;
+    display:grid;
+    grid-template-columns: 1fr 420px;
+    gap:28px;
+    align-items:center;
+  }
+  .hero-card{
+    padding:28px;border-radius:16px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border:1px solid var(--glass-border);
+    box-shadow: var(--card-glow);
+    backdrop-filter: blur(8px);
+  }
+  .hero h2{
+    margin:0 0 8px 0;font-size:32px;line-height:1.02;
+    background:var(--neon-text);-webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .subtitle{
+    margin:0 0 18px 0;color:#b9c4d9;
+    font-weight:500;
+  }
+
+  .search-row{
+    display:flex;gap:12px;align-items:center;
+  }
+  .input{
+    flex:1;display:flex;gap:8px;align-items:center;padding:10px 12px;border-radius:12px;
+    border:1px solid rgba(255,255,255,0.04);
+    background:transparent;color:inherit;font-size:14px;
+    outline:none;
+  }
+  .select, .input, .btn{
+    transition:box-shadow .18s ease, transform .12s ease;
+  }
+  .input:focus{box-shadow:0 8px 30px rgba(0,245,255,0.06)}
+  .btn{
+    padding:10px 14px;border-radius:12px;border:0;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));
+    color:#071229;font-weight:700;cursor:pointer;
+    box-shadow: 0 10px 30px rgba(157,0,255,0.12);
+  }
+
+  .hero-right{
+    display:flex;flex-direction:column;gap:12px;
+    padding:18px;border-radius:12px;border:1px dashed rgba(255,255,255,0.03);
+    background:linear-gradient(180deg, rgba(157,0,255,0.02), rgba(0,245,255,0.01));
+  }
+  .stat{
+    display:flex;gap:12px;align-items:center;
+  }
+  .stat .num{
+    font-size:20px;font-weight:800;background:linear-gradient(90deg,var(--accent-1),var(--accent-3));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+
+  /* -------------------------
+     Grid of Anime Cards
+     ------------------------- */
+  .grid{
+    position:relative;
+    z-index:3;
+    width:100%;
+    max-width:1200px;
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap:20px;
+    margin-top:4px;
+    padding-bottom:56px;
+  }
+  .card{
+    position:relative;overflow:hidden;border-radius:14px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.03);
+    cursor:pointer; transform:translateY(0); transition:transform .28s cubic-bezier(.2,.9,.2,1), box-shadow .28s;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+    display:flex;flex-direction:column;
+  }
+  .card:focus-visible{outline:3px solid rgba(157,0,255,0.12);outline-offset:4px}
+  .card:hover{
+    transform:translateY(-8px);
+    box-shadow: 0 18px 50px rgba(157,0,255,0.16);
+  }
+  .thumb{
+    width:100%;aspect-ratio:16/9;background-size:cover;background-position:center;
+    display:block;flex-shrink:0;
+    filter:drop-shadow(0 6px 24px rgba(157,0,255,0.06));
+  }
+
+  /* Provide a simple accessible caption fallback for thumbs when images fail */
+  .thumb[aria-label]:not([style]){background:#0b0b14;display:grid;place-items:center;color:#9fbfdf;font-weight:700}
+  .card-body{
+    padding:12px 14px 16px 14px;display:flex;flex-direction:column;gap:8px;
+  }
+  .title{
+    margin:0;font-weight:800;font-size:15px;
+    background: linear-gradient(90deg,var(--accent-2),var(--accent-3));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .meta{font-size:13px;color:#b9c4d9;display:flex;justify-content:space-between;align-items:center}
+  .tags{display:flex;gap:8px;flex-wrap:wrap}
+  .tag{font-size:11px;padding:6px 8px;border-radius:999px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.01)}
+  .glow {
+    position:absolute;inset:auto -30% -40% auto;width:200px;height:200px;border-radius:50%;
+    filter:blur(38px);opacity:0.9;transform:translateZ(0);
+  }
+  .glow.c1{background:radial-gradient(circle,#00f5ff,transparent)}
+  .glow.c2{background:radial-gradient(circle,#9d00ff,transparent)}
+  .glow.c3{background:radial-gradient(circle,#ff2d95,transparent)}
+
+  /* Overlay ribbon */
+  .ribbon{
+    position:absolute;top:10px;left:10px;padding:6px 10px;border-radius:8px;
+    background:linear-gradient(90deg,var(--accent-1),var(--accent-3));color:#071229;font-weight:800;font-size:12px;
+    transform:rotate(-6deg);box-shadow: 0 8px 30px rgba(157,0,255,0.12);
+  }
+
+  /* -------------------------
+     Modal
+     ------------------------- */
+  .modal-backdrop{
+    position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+    background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.8));
+    z-index:40;padding:20px;
+  }
+  .modal{
+    width:100%;max-width:1000px;border-radius:12px;overflow:hidden;background:#071029;border:1px solid rgba(255,255,255,0.03);
+    box-shadow:0 20px 80px rgba(0,0,0,0.8);
+  }
+  .modal .close{
+    position:absolute;top:12px;right:12px;background:transparent;border:0;color:#fff;font-size:22px;cursor:pointer;
+  }
+  .modal .content{position:relative;padding:14px}
+  .modal iframe{width:100%;height:560px;border:0}
+
+  /* -------------------------
+     Footer & small screens
+     ------------------------- */
+  footer{
+    width:100%;max-width:1200px;display:flex;justify-content:space-between;align-items:center;padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);
+    background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
+    z-index:5;
+  }
+  .small{font-size:13px;color:#b9c4d9}
+
+  @media (max-width:920px){
+    .hero{grid-template-columns:1fr}
+    .hero-right{order:3}
+    .grid{grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))}
+    .modal iframe{height:320px}
+  }
+</style>
+</head>
+<body>
+<canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+<div class="wrap" role="main">
+  <header>
+    <div class="logo" aria-hidden="false">
+      <div class="badge" aria-hidden="true">💫</div>
+      <h1>NEON ANIME</h1>
+    </div>
+
+    <nav aria-label="Top Navigation">
+      <button class="nav-btn" id="btn-explore">Explore</button>
+      <button class="nav-btn" id="btn-mylist">My List</button>
+      <button class="nav-btn primary" id="btn-add">Add Anime</button>
+    </nav>
+  </header>
+
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-card">
+      <h2 id="hero-title">Dive into Neon-Tinted Worlds</h2>
+      <p class="subtitle">Discover trending anime, watch trailers, save favorites, and feel the glow.</p>
+
+      <div class="search-row" role="search" aria-label="Search anime">
+        <input class="input" id="search" type="search" placeholder="Search anime title or tag..." aria-label="Search anime">
+        <select id="filter" class="input select" aria-label="Filter by genre">
+          <option value="">All genres</option>
+          <option>Action</option>
+          <option>Adventure</option>
+          <option>Romance</option>
+          <option>Sci-Fi</option>
+          <option>Fantasy</option>
+          <option>Slice of Life</option>
+        </select>
+        <button class="btn" id="btn-search">Search</button>
+      </div>
+
+      <div style="margin-top:14px;display:flex;gap:8px;align-items:center">
+        <small class="small">Sort by:</small>
+        <select id="sort" class="input select" aria-label="Sort">
+          <option value="popular">Most Popular</option>
+          <option value="new">Newest</option>
+          <option value="alpha">A → Z</option>
+        </select>
+      </div>
+    </div>
+
+    <aside class="hero-right" aria-label="Quick stats">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div class="stat">
+            <div>
+              <div class="num" id="total-count">12</div>
+              <div class="small">Animes curated</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="small">Theme</div>
+          <div style="font-weight:800;background:var(--neon-text);-webkit-background-clip:text;background-clip:text;color:transparent">Fluorescent</div>
+        </div>
+      </div>
+
+      <div style="margin-top:8px;">
+        <div class="small">Tip</div>
+        <div style="font-weight:600;color:#cfe9ff">Hover cards to see the neon sparkle. Click a card to open the trailer modal.</div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- Grid -->
+  <section class="grid" id="grid" aria-live="polite">
+    <!-- Cards will be injected here by JS -->
+  </section>
+
+  <footer>
+    <div class="small">Made with ✨ for anime lovers</div>
+    <div class="small">Replace placeholder images & trailers to personalize</div>
+  </footer>
+</div>
+
+<!-- Modal -->
+<div class="modal-backdrop" id="modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal" role="document">
+    <button class="close" id="modal-close" aria-label="Close trailer">✕</button>
+    <div class="content">
+      <div id="modal-title" style="font-weight:800;margin-bottom:8px"></div>
+      <iframe id="modal-frame" title="Anime trailer" src="" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------------------------------
+   Data (sample) - replace with your real dataset
+   --------------------------------- */
+const sampleData = [
+  {
+    id: "a1",
+    title: "Neon Skyline",
+    tags: ["Sci-Fi","Action"],
+    img: "https://picsum.photos/seed/neon1/800/450",
+    ribbon: "TRENDING",
+    trailer: "anime/neon-skyline.html"
+  },
+  {
+    id: "a2",
+    title: "Moonlight Garden",
+    tags: ["Romance","Fantasy"],
+    img: "https://picsum.photos/seed/neon2/800/450",
+    trailer: "anime/moonlight-garden.html"
+  },
+  {
+    id: "a3",
+    title: "Cyber Samurai",
+    tags: ["Action","Adventure"],
+    img: "https://picsum.photos/seed/neon3/800/450",
+    ribbon: "NEW",
+    trailer: "anime/cyber-samurai.html"
+  },
+  {
+    id: "a4",
+    title: "Starlit High",
+    tags: ["Slice of Life","Romance"],
+    img: "https://picsum.photos/seed/neon4/800/450",
+    trailer: "anime/starlit-high.html"
+  },
+  {
+    id: "a5",
+    title: "Orbit Breakers",
+    tags: ["Sci-Fi","Adventure"],
+    img: "https://picsum.photos/seed/neon5/800/450",
+    trailer: "anime/orbit-breakers.html"
+  },
+  {
+    id: "a6",
+    title: "Rust & Roses",
+    tags: ["Drama","Romance"],
+    img: "https://picsum.photos/seed/neon6/800/450",
+    trailer: "anime/rust-and-roses.html"
+  },
+  {
+    id: "a7",
+    title: "Quantum Drift",
+    tags: ["Sci-Fi","Action"],
+    img: "https://picsum.photos/seed/neon7/800/450",
+    trailer: "anime/quantum-drift.html"
+  },
+  {
+    id: "a8",
+    title: "Celestial Traders",
+    tags: ["Fantasy","Adventure"],
+    img: "https://picsum.photos/seed/neon8/800/450",
+    trailer: "anime/celestial-traders.html"
+  },
+  {
+    id: "a9",
+    title: "Afterglow City",
+    tags: ["Slice of Life","Drama"],
+    img: "https://picsum.photos/seed/neon9/800/450",
+    trailer: "anime/afterglow-city.html"
+  },
+  {
+    id: "a10",
+    title: "Blade Rhythm",
+    tags: ["Action","Music"],
+    img: "https://picsum.photos/seed/neon10/800/450",
+    ribbon: "HOT",
+    trailer: "anime/blade-rhythm.html"
+  },
+  {
+    id: "a11",
+    title: "Palette of Dreams",
+    tags: ["Fantasy","Slice of Life"],
+    img: "https://picsum.photos/seed/neon11/800/450",
+    trailer: "anime/palette-of-dreams.html"
+  },
+  {
+    id: "a12",
+    title: "Eclipse Protocol",
+    tags: ["Sci-Fi","Thriller"],
+    img: "https://picsum.photos/seed/neon12/800/450",
+    trailer: "anime/eclipse-protocol.html"
+  }
+];
+
+/* ---------------------------------
+   UI Render
+   --------------------------------- */
+const grid = document.getElementById('grid');
+const totalCount = document.getElementById('total-count');
+const searchInput = document.getElementById('search');
+const filterSelect = document.getElementById('filter');
+const sortSelect = document.getElementById('sort');
+const modal = document.getElementById('modal');
+const modalFrame = document.getElementById('modal-frame');
+const modalTitle = document.getElementById('modal-title');
+
+let activeList = [...sampleData];
+
+function renderGrid(list){
+  grid.innerHTML = '';
+  totalCount.textContent = list.length;
+  list.forEach(item=>{
+    const el = document.createElement('article');
+    el.className = 'card';
+    el.tabIndex = 0;
+    el.setAttribute('role','button');
+    el.setAttribute('aria-label', `Open trailer for ${item.title}`);
+
+    el.innerHTML = `
+      <div class="thumb" style="background-image:url('${item.img}')" aria-hidden="true"></div>
+      <div class="card-body">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h3 class="title">${item.title}</h3>
+          <div class="meta small">${item.tags[0] ?? ''}</div>
+        </div>
+        <div class="meta">
+          <div class="tags">${item.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="nav-btn" data-action="open" data-id="${item.id}">Watch</button>
+            <button class="nav-btn" data-action="fav" data-id="${item.id}">★</button>
+          </div>
+        </div>
+      </div>
+      ${item.ribbon ? `<div class="ribbon">${item.ribbon}</div>` : ''}
+      <div class="glow c1" style="top:-40px;right:-60px;opacity:.45"></div>
+      <div class="glow c2" style="bottom:-40px;left:-40px;opacity:.25"></div>
+    `;
+    // click handlers
+    el.addEventListener('click',(e)=>{
+      // if clicked button inside, it handles separately
+      const btn = e.target.closest('button');
+      if(btn){ return; }
+      openModal(item);
+    });
+    // keyboard open via Enter
+    el.addEventListener('keydown', (ev)=>{
+      if(ev.key === 'Enter' || ev.key === ' '){
+        ev.preventDefault();
+        openModal(item);
+      }
+    });
+
+    grid.appendChild(el);
+  });
+}
+
+/* ---------------------------------
+   Search / Filter / Sort
+   --------------------------------- */
+function applyControls(){
+  const query = searchInput.value.trim().toLowerCase();
+  const genre = filterSelect.value;
+  const sort = sortSelect.value;
+
+  let list = sampleData.filter(a=>{
+    const matchesQuery = !query || a.title.toLowerCase().includes(query) || a.tags.join(' ').toLowerCase().includes(query);
+    const matchesGenre = !genre || a.tags.includes(genre);
+    return matchesQuery && matchesGenre;
+  });
+
+  if(sort === 'alpha'){
+    list.sort((a,b)=> a.title.localeCompare(b.title));
+  } else if(sort === 'new'){
+    // sample data lacks date; shuffle to simulate "new"
+    list = list.reverse();
+  } else if(sort === 'popular'){
+    // no popularity metric; keep original
+  }
+
+  activeList = list;
+  renderGrid(list);
+}
+
+/* ---------------------------------
+   Modal controls
+   --------------------------------- */
+function openModal(item){
+  modalTitle.textContent = item.title;
+  // Set iframe src to trailer (autoplay=1 for demo)
+  modalFrame.src = item.trailer + (item.trailer.includes('?') ? '&autoplay=1' : '?autoplay=1');
+  modal.style.display = 'flex';
+  modal.setAttribute('aria-hidden','false');
+  // trap focus (simple)
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(){
+  modal.style.display = 'none';
+  modal.setAttribute('aria-hidden','true');
+  modalFrame.src = '';
+  document.body.style.overflow = '';
+}
+
+/* ---------------------------------
+   Event Delegation
+   --------------------------------- */
+document.addEventListener('click', (e)=>{
+  const actionBtn = e.target.closest('button[data-action]');
+  if(actionBtn){
+    const action = actionBtn.dataset.action;
+    const id = actionBtn.dataset.id;
+    const item = sampleData.find(s=>s.id === id);
+    if(action === 'open') openModal(item);
+    if(action === 'fav') {
+      actionBtn.textContent = actionBtn.textContent.trim() === '★' ? '✓' : '★';
+      actionBtn.style.background = actionBtn.textContent === '✓' ? 'linear-gradient(90deg,var(--accent-1),var(--accent-3))' : '';
+    }
+  }
+});
+document.getElementById('btn-search').addEventListener('click', applyControls);
+document.getElementById('search').addEventListener('keyup', (e)=>{
+  if(e.key === 'Enter') applyControls();
+});
+document.getElementById('filter').addEventListener('change', applyControls);
+document.getElementById('sort').addEventListener('change', applyControls);
+
+document.getElementById('modal-close').addEventListener('click', closeModal);
+modal.addEventListener('click', (e)=>{
+  if(e.target === modal) closeModal();
+});
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape') closeModal();
+});
+
+/* ---------------------------------
+   Init
+   --------------------------------- */
+renderGrid(sampleData);
+
+/* ---------------------------------
+   Particle canvas - subtle connecting neon dots
+   --------------------------------- */
+(function(){
+  const canvas = document.getElementById('particle-canvas');
+  const ctx = canvas.getContext('2d');
+  let w = canvas.width = innerWidth;
+  let h = canvas.height = innerHeight;
+  const DPR = Math.max(1, window.devicePixelRatio || 1);
+  canvas.width = innerWidth * DPR;
+  canvas.height = innerHeight * DPR;
+  canvas.style.width = innerWidth + 'px';
+  canvas.style.height = innerHeight + 'px';
+  ctx.scale(DPR, DPR);
+  const particles = [];
+  const PARTICLE_COUNT = Math.min(120, Math.floor((innerWidth * innerHeight) / 50000));
+
+  function rnd(min,max){return Math.random()*(max-min)+min;}
+
+  for(let i=0;i<PARTICLE_COUNT;i++){
+    particles.push({
+      x: rnd(0,w),
+      y: rnd(0,h),
+      vx: rnd(-0.25,0.25),
+      vy: rnd(-0.25,0.25),
+      r: rnd(1,2.6),
+      hue: rnd(180,320)
+    });
+  }
+
+  function frame(){
+    ctx.clearRect(0,0,w,h);
+    // draw connections
+    for(let i=0;i<particles.length;i++){
+      const p = particles[i];
+      // move
+      p.x += p.vx;
+      p.y += p.vy;
+      if(p.x < -10) p.x = w + 10;
+      if(p.x > w+10) p.x = -10;
+      if(p.y < -10) p.y = h + 10;
+      if(p.y > h+10) p.y = -10;
+      // draw point
+      ctx.beginPath();
+      const grad = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*6);
+      grad.addColorStop(0, `hsla(${p.hue},90%,60%,0.85)`);
+      grad.addColorStop(0.4, `hsla(${p.hue},90%,60%,0.25)`);
+      grad.addColorStop(1, `rgba(0,0,0,0)`);
+      ctx.fillStyle = grad;
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fill();
+      // connect with nearby
+      for(let j=i+1;j<particles.length;j++){
+        const q = particles[j];
+        const dx = p.x - q.x;
+        const dy = p.y - q.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < 120){
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.strokeStyle = `rgba(160,60,255,${1 - (dist/120)})`;
+          ctx.lineWidth = 0.6;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  frame();
+
+  // Resize
+  addEventListener('resize', ()=>{
+    w = canvas.width = innerWidth * DPR;
+    h = canvas.height = innerHeight * DPR;
+    canvas.style.width = innerWidth + 'px';
+    canvas.style.height = innerHeight + 'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  });
+})();
+
+/* ---------------------------------
+   Small polish: gradient animated title in hero
+   --------------------------------- */
+(function animateTitle(){
+  const h2 = document.querySelector('.hero h2');
+  let angle = 0;
+  setInterval(()=>{
+    angle = (angle + 2) % 360;
+    h2.style.background = `linear-gradient(${angle}deg,var(--accent-1),var(--accent-2),var(--accent-3))`;
+  },120);
+})();
+</script>
+</body>
+</html>
