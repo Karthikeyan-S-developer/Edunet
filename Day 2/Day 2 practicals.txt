@@ -14,7 +14,7 @@ hosting a website
 ------------------------------
 create branches and merge it
 GitHub collaboration
--------------------------------
+------------------------------
 
 git config --global user.name "Karthikeyan"
 git config --global user.name "karthikeya4255@gmail.com"
