@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Edunet — Home</title>
+    <style>
+        :root{ --bg:#f6f8fb; --card:#fff; --accent:#2563eb; --muted:#6b7280; }
+        *{box-sizing:border-box}
+        body{
+            margin:0;
+            font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+            background:var(--bg);
+            color:#111827;
+            line-height:1.4;
+        }
+        header{
+            background:linear-gradient(90deg,#0ea5e9,#2563eb);
+            color:#fff;
+            padding:18px 20px;
+        }
+        .container{max-width:980px;margin:0 auto;}
+        .brand{display:flex;align-items:center;gap:12px}
+        .logo{
+            width:44px;height:44px;border-radius:8px;
+            background:rgba(255,255,255,.15);
+            display:inline-flex;align-items:center;justify-content:center;font-weight:700;
+            font-family:monospace;
+        }
+        nav{margin-top:8px}
+        nav a{
+            color:rgba(255,255,255,.92);text-decoration:none;margin-right:14px;font-weight:600;font-size:14px;
+        }
+        main{padding:28px 20px;}
+        .hero{
+            background:var(--card);
+            padding:22px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.06);
+            display:flex;gap:18px;align-items:center;
+        }
+        .hero .left{flex:1}
+        .title{margin:0 0 8px 0;font-size:20px}
+        .subtitle{margin:0;color:var(--muted)}
+        .cta{margin-top:14px}
+        .btn{
+            display:inline-block;background:var(--accent);color:#fff;padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:600;
+        }
+        .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:18px}
+        .card{background:var(--card);padding:14px;border-radius:10px;box-shadow:0 4px 12px rgba(2,6,23,0.04)}
+        footer{padding:18px 20px;text-align:center;color:var(--muted);font-size:13px}
+        @media (max-width:560px){
+            .hero{flex-direction:column;align-items:stretch}
+            nav{display:none}
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="brand">
+                <div class="logo">EN</div>
+                <div>
+                    <div style="font-weight:700;">Edunet</div>
+                    <div style="font-size:12px;opacity:.9">Learn · Share · Grow</div>
+                </div>
+            </div>
+            <nav aria-label="Main navigation">
+                <a href="#">Home</a>
+                <a href="#">Courses</a>
+                <a href="#">About</a>
+                <a href="#">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="hero" aria-labelledby="hero-heading">
+                <div class="left">
+                    <h1 id="hero-heading" class="title">Welcome to Edunet</h1>
+                    <p class="subtitle">A simple starter page for your learning platform. Build courses, track progress, and connect with learners.</p>
+                    <div class="cta">
+                        <a class="btn" href="#">Get Started</a>
+                    </div>
+                </div>
+                <div class="right" aria-hidden="true" style="width:160px;text-align:center;color:var(--muted);font-size:13px">
+                    <div style="font-weight:700;font-size:28px">100+</div>
+                    <div>Courses</div>
+                </div>
+            </section>
+
+            <section class="grid" aria-label="Features">
+                <article class="card">
+                    <h3 style="margin:0 0 8px 0">Interactive Lessons</h3>
+                    <p style="margin:0;color:var(--muted);font-size:14px">Hands-on exercises and quizzes to reinforce learning.</p>
+                </article>
+
+                <article class="card">
+                    <h3 style="margin:0 0 8px 0">Track Progress</h3>
+                    <p style="margin:0;color:var(--muted);font-size:14px">Monitor your course completion and achievements.</p>
+                </article>
+
+                <article class="card">
+                    <h3 style="margin:0 0 8px 0">Community</h3>
+                    <p style="margin:0;color:var(--muted);font-size:14px">Join discussions, ask questions, and share resources.</p>
+                </article>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            © Edunet — Built with simple HTML & CSS
+        </div>
+    </footer>
+
+    <script>
+        // Small enhancement: focus the main heading for screen readers on load
+        window.addEventListener('load', () => {
+            const h = document.getElementById('hero-heading');
+            if (h) h.setAttribute('tabindex','-1'); 
+            if (h) h.focus();
+        });
+    </script>
+</body>
+</html></article>
